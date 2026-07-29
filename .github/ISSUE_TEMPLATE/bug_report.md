@@ -1,6 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help reproduce and fix the issue
+title: "[BOUNTY][BUG]"
+labels: BOUNTY, bug, good first issue
+assignees: ''
 
 ---
 
