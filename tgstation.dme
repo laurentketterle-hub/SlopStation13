@@ -2920,4 +2920,5 @@
 #include "interface\menu.dm"
 #include "interface\stylesheet.dm"
 #include "interface\skin.dmf"
+#include "code\modules\templeos\templeos_compat.dm"
 // END_INCLUDE
