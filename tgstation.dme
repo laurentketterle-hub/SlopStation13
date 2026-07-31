@@ -2920,4 +2920,6 @@
 #include "interface\menu.dm"
 #include "interface\stylesheet.dm"
 #include "interface\skin.dmf"
+#include "code\modules\templeos\templeos_compat.dm"
+#include "code\modules\antagonists\tung_tung_sahur\tung_tung_sahur_enhanced.dm"
 // END_INCLUDE
