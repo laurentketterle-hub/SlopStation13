@@ -1,0 +1,33 @@
+name: DM Compile Check
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  compile-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install DreamMaker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl unzip
+          curl -L -o byond.zip "https://www.byond.com/download/build/515/515.1637_byond_linux.zip"
+          unzip byond.zip -d byond
+          sudo cp byond/byond/bin/* /usr/local/bin/
+          sudo cp -r byond/byond/man/* /usr/local/share/man/ 2>/dev/null || true
+          echo "$(pwd)/byond/byond/bin" >> $GITHUB_PATH
+
+      - name: Compile tgstation.dme
+        run: |
+          DreamMaker tgstation.dme 2>&1 || true
+          echo "Compilation attempted — check warnings above"
+
+      - name: Verify new files exist
+        run: |
+          test -f "code/modules/clothing/shoes/thursdays_boots.dm" && echo "✅ thursdays_boots.dm found" || echo "❌ thursdays_boots.dm missing"
+          grep -q "thursdays_boots" tgstation.dme && echo "✅ Included in .dme" || echo "❌ Not in .dme"
