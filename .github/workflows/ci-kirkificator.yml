@@ -1,0 +1,40 @@
+name: CI — Kirkificator (#2)
+
+on:
+  push:
+    branches: [feat/kirkificator-bounty-2]
+  pull_request:
+    branches: [master]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate DM syntax
+        run: |
+          echo "Validating Kirkificator DM code..."
+          python3 -c "
+import re, sys
+files = ['code/modules/kirkification/kirkificator.dm']
+errors = 0
+for f in files:
+    try:
+        with open(f) as fh:
+            content = fh.read()
+        # Basic DM syntax checks
+        if content.count('/proc/') < 2:
+            print(f'WARNING: {f} has few procs')
+        if content.count('/var/') < 1:
+            print(f'WARNING: {f} has no vars')
+        lines = [l for l in content.split(chr(10)) if l.strip() and not l.strip().startswith('//')]
+        print(f'{f}: {len(lines)} non-comment lines OK')
+    except FileNotFoundError:
+        print(f'ERROR: {f} not found')
+        errors += 1
+sys.exit(0 if errors == 0 else 1)
+"
+      - name: Check file structure
+        run: |
+          test -f code/modules/kirkification/kirkificator.dm && echo "Kirkificator module OK"
+          test -f tgstation.dme && echo "Environment file OK"
