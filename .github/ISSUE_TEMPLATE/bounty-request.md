@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+# GUIDELINES MUST BE FOLLOWED https://github.com/theselfish/SlopStation13/issues/1
+
 [Title]: # Your feature needs to have a good title. If you want an object added, the object's name would be a good title, and such. Use common sense.
 
 [Implementation]: # How should the feature work out? What exactly is it supposed to do, in your initial idea? If an item, can it be crafted/found/bought and for what?
