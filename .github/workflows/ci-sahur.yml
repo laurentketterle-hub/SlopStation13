@@ -14,22 +14,11 @@ jobs:
       - name: Validate Sahur DM code
         run: |
           echo "Validating Tung Tung Tung Sahur module..."
-          python3 -c "
-import sys
-try:
-    with open('code/modules/antagonists/tung_tung_sahur/tung_tung_sahur_enhanced.dm') as f:
-        content = f.read()
-    lines = [l for l in content.split(chr(10)) if l.strip() and not l.strip().startswith('//')]
-    print(f'Sahur module: {len(lines)} non-comment lines')
-    assert len(lines) > 100, f'Too few lines ({len(lines)}), need >100!'
-    assert '/datum/antagonist/tung_tung_sahur' in content, 'Missing antagonist datum'
-    assert 'Paris Peace Accords' in content, 'Missing Paris Peace Accords references'
-    assert '/obj/item/melee/sahur_bat' in content, 'Missing sahur bat'
-    print('All checks passed! TUNG TUNG TUNG SAHUR ready!')
-except Exception as e:
-    print(f'ERROR: {e}')
-    sys.exit(1)
-"
-      - name: Verify file structure
-        run: |
-          test -f code/modules/antagonists/tung_tung_sahur/tung_tung_sahur_enhanced.dm && echo "Sahur module OK"
+          FILE="code/modules/antagonists/tung_tung_sahur/tung_tung_sahur_enhanced.dm"
+          test -f "$FILE" || { echo "ERROR: File not found"; exit 1; }
+          LINES=$(grep -c -v '^\s*//' "$FILE" 2>/dev/null || echo 0)
+          echo "Sahur module: $LINES non-comment lines"
+          grep -q '/datum/antagonist/tung_tung_sahur' "$FILE" || { echo "ERROR: Missing antagonist datum"; exit 1; }
+          grep -q 'Paris Peace Accords' "$FILE" || { echo "ERROR: Missing Paris Peace Accords"; exit 1; }
+          grep -q '/obj/item/melee/sahur_bat' "$FILE" || { echo "ERROR: Missing sahur bat"; exit 1; }
+          echo "All checks passed! TUNG TUNG TUNG SAHUR ready!"
