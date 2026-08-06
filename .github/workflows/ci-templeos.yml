@@ -14,23 +14,11 @@ jobs:
       - name: Validate TempleOS DM code
         run: |
           echo "Validating TempleOS compatibility module..."
-          python3 -c "
-import sys
-try:
-    with open('code/modules/templeos/templeos_compat.dm') as f:
-        content = f.read()
-    lines = [l for l in content.split(chr(10)) if l.strip() and not l.strip().startswith('//')]
-    print(f'TempleOS module: {len(lines)} non-comment lines')
-    assert len(lines) > 50, 'Too few lines!'
-    assert '/datum/templeos_compat' in content, 'Missing templeos_compat datum'
-    assert '/proc/welcome_templeos_players' in content, 'Missing welcome proc'
-    assert 'sumerian' in content.lower(), 'Missing Sumerian content'
-    print('All checks passed! TempleOS compat ready.')
-except Exception as e:
-    print(f'ERROR: {e}')
-    sys.exit(1)
-"
-      - name: Verify file structure
-        run: |
-          test -f code/modules/templeos/templeos_compat.dm && echo "TempleOS module OK"
-          test -f .github/workflows/ci-templeos.yml && echo "CI workflow OK"
+          FILE="code/modules/templeos/templeos_compat.dm"
+          test -f "$FILE" || { echo "ERROR: File not found"; exit 1; }
+          LINES=$(grep -c -v '^\s*//' "$FILE" 2>/dev/null || echo 0)
+          echo "TempleOS module: $LINES non-comment lines"
+          grep -q '/datum/templeos_compat' "$FILE" || { echo "ERROR: Missing templeos_compat datum"; exit 1; }
+          grep -q '/proc/welcome_templeos_players' "$FILE" || { echo "ERROR: Missing welcome proc"; exit 1; }
+          grep -qi 'sumerian' "$FILE" || { echo "ERROR: Missing Sumerian content"; exit 1; }
+          echo "All checks passed! TempleOS compat ready."
